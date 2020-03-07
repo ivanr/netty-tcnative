@@ -2580,8 +2580,43 @@ complete:
 #endif // defined(OPENSSL_IS_BORINGSSL) || defined(LIBRESSL_VERSION_NUMBER)
 }
 
+
+TCN_IMPLEMENT_CALL(void, SSL, setGroupsList)(TCN_STDARGS, jlong ssl, jstring list) {
+    SSL *ssl_ = J2P(ssl, SSL *);
+
+    TCN_CHECK_NULL(ssl_, ssl, /* void */);
+
+    TCN_ALLOC_CSTRING(list);
+
+    if (SSL_set1_groups_list(ssl_, J2S(list)) != 1) {
+        char err[ERR_LEN];
+        ERR_error_string_n(ERR_get_error(), err, ERR_LEN);
+        tcn_Throw(e, "Unable to set groups (%s)", err);
+    }
+
+    TCN_FREE_CSTRING(list);
+}
+
+TCN_IMPLEMENT_CALL(void, SSL, setSigAlgsList)(TCN_STDARGS, jlong ssl, jstring list) {
+    SSL *ssl_ = J2P(ssl, SSL *);
+
+    TCN_CHECK_NULL(ssl_, ssl, /* void */);
+
+    TCN_ALLOC_CSTRING(list);
+
+    if (SSL_set1_sigalgs_list(ssl_, J2S(list)) != 1) {
+        char err[ERR_LEN];
+        ERR_error_string_n(ERR_get_error(), err, ERR_LEN);
+        tcn_Throw(e, "Unable to set sigalgs (%s)", err);
+    }
+
+    TCN_FREE_CSTRING(list);
+}
+
 // JNI Method Registration Table Begin
 static const JNINativeMethod method_table[] = {
+  { TCN_METHOD_TABLE_ENTRY(setGroupsList, (JLjava/lang/String;)V, SSL) },
+  { TCN_METHOD_TABLE_ENTRY(setSigAlgsList, (JLjava/lang/String;)V, SSL) },
   { TCN_METHOD_TABLE_ENTRY(bioLengthByteBuffer, (J)I, SSL) },
   { TCN_METHOD_TABLE_ENTRY(bioLengthNonApplication, (J)I, SSL) },
   { TCN_METHOD_TABLE_ENTRY(version, ()I, SSL) },

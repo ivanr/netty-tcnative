@@ -839,4 +839,9 @@ public final class SSL {
      * @return the task to run.
      */
     public static native Runnable getTask(long ssl);
+	
+	
+	public static native void setGroupsList(long ssl, String list);
+	
+	public static native void setSigAlgsList(long ssl, String sigalgs);
 }
